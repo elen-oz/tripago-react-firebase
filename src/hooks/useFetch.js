@@ -6,25 +6,38 @@ export const useFetch = (url) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchData = async () => {
       setIsPendig(true);
 
       try {
-        const res = await fetch(url);
+        const res = await fetch(url, { signal: controller.signal });
+        if (!res.ok) {
+          throw new Error(res.statusText);
+        }
         const json = await res.json();
 
         setIsPendig(false);
         setData(json);
         setError(null);
       } catch (err) {
-        setIsPendig(false);
-        setError('Could not fetch the data');
-        console.log(err.message);
+        if (err.name === 'AbortError') {
+          console.log('The fetch was aborted');
+        } else {
+          setIsPendig(false);
+          setError('Could not fetch the data');
+          console.log(err.message);
+        }
       }
     };
 
     fetchData();
+
+    return () => {
+      controller.abort();
+    };
   }, [url]);
 
-  return { data, isPending };
+  return { data, isPending, error };
 };
