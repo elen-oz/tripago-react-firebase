@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
-
-//styles
+import { useState, useEffect } from 'react';
 import './TripList.css';
 
-const TripList = () => {
+export default function TripList() {
   const [trips, setTrips] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:3000/trips')
+    fetch('http://localhost:5000/trips')
       .then((response) => response.json())
       .then((json) => setTrips(json));
   }, []);
@@ -16,7 +14,7 @@ const TripList = () => {
 
   return (
     <div className='trip-list'>
-      <h2>TripList</h2>
+      <h2>Trip List</h2>
       <ul>
         {trips.map((trip) => (
           <li key={trip.id}>
@@ -27,6 +25,4 @@ const TripList = () => {
       </ul>
     </div>
   );
-};
-
-export default TripList;
+}
